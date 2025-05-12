@@ -1,5 +1,5 @@
 import { Elysia, t } from "elysia";
-import { getUserId, userService } from './user'
+import { getUserId, userService } from '@/user'
 
 const memo = t.Object({
   data: t.String(),

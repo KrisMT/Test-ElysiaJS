@@ -1,7 +1,7 @@
 import { Elysia, t } from "elysia";
 import { swagger } from '@elysiajs/swagger'
-import { note } from './note'
-import { user } from './user'
+import { note } from '@/note'
+import { user } from '@/user'
 
 const app = new Elysia()
   .use(swagger({ provider: 'swagger-ui' }))
