@@ -3,13 +3,22 @@ import { swagger } from '@elysiajs/swagger'
 import { note } from '@/note'
 import { user } from '@/user'
 
+import { OpenAPI, auth } from '@/utils/auth'
+
 const app = new Elysia()
-  .use(swagger({ provider: 'swagger-ui' }))
+  .use(swagger({ 
+    provider: 'swagger-ui' ,
+    documentation: {
+      components: await OpenAPI.components,
+      paths: await OpenAPI.getPaths()
+    }
+  }))
   .onError(({ error, code }) => {
     if (code === 'NOT_FOUND') return 'Not Found :('
 
     console.error(error);
   })
+  .mount('/auth', auth.handler)
   .use(note)
   .use(user)
   .get("/", 'Hello Elysia')
