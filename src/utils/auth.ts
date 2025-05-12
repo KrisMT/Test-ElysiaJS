@@ -1,6 +1,8 @@
 import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from "better-auth/adapters/drizzle"
 import { db } from "@/db"
+import * as authSchema from '@/db/auth-schema'
+
 
 import { openAPI } from 'better-auth/plugins'
 
@@ -8,6 +10,9 @@ export const auth = betterAuth({
   basePath: '/api',
   database: drizzleAdapter(db, {
         provider: "sqlite", //"pg" or "mysql", "sqlite"
+        schema: {
+          ...authSchema,
+        }
   }),
   emailAndPassword: {
     enabled: true,
