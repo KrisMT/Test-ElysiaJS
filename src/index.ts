@@ -1,11 +1,13 @@
 import { Elysia, t } from "elysia";
 import { swagger } from '@elysiajs/swagger'
-import { note } from '@/note'
+// import { note } from '@/note'
 import { user } from '@/user'
+import { betterAuthService } from '@/utils/auth'
 
 import { OpenAPI, auth } from '@/utils/auth'
 
 const app = new Elysia()
+  .use(betterAuthService)
   .use(swagger({ 
     provider: 'swagger-ui' ,
     documentation: {
@@ -18,8 +20,7 @@ const app = new Elysia()
 
     console.error(error);
   })
-  .mount('/auth', auth.handler)
-  .use(note)
+  // .use(note)
   .use(user)
   .get("/", 'Hello Elysia')
   .listen(3000);

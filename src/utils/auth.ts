@@ -2,7 +2,7 @@ import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from "better-auth/adapters/drizzle"
 import { db } from "@/db"
 import * as authSchema from '@/db/auth-schema'
-
+import { Elysia } from 'elysia'
 
 import { openAPI } from 'better-auth/plugins'
 
@@ -45,4 +45,23 @@ export const OpenAPI = {
     }) as Promise<any>,
   components: getSchema().then(({ components }) => components) as Promise<any>
 } as const
+
+export const betterAuthService = new Elysia({ name: 'better-auth/service' })
+  .mount('/auth', auth.handler)
+  .macro({
+    auth: {
+      async resolve({ error, request: { headers }}) {
+        const session = await auth.api.getSession({
+          headers
+        })
+        
+        if (!session) return error(401)
+
+        return {
+          user: session.user,
+          session: session.session
+        }
+      }
+    }
+  })
 
