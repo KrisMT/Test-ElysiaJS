@@ -7,7 +7,7 @@ import { int, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 //   class_name: varchar({ length: 255 }).notNull(),
 // })
 
-export const classTable = sqliteTable("classes", {
+export const classes = sqliteTable("classes", {
   id: int().primaryKey({ autoIncrement: true }),
   class_id: text().notNull(),
   class_name: text().notNull(),

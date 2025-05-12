@@ -1,3 +1,21 @@
+# Drizzle and better-auth
+## Generate `better-auth` to specific folder
+```bash
+bunx @better-auth/cli generate --output ./src/db/auth-schema.ts -y
+```
+
+## 
+```bash
+bunx drizzle-kit generate
+
+bunx drizzle-kit migrate
+
+or
+
+bunx drizzle-kit push
+```
+
+
 # Elysia with Bun runtime
 
 ## Getting Started
@@ -13,3 +31,5 @@ bun run dev
 ```
 
 Open http://localhost:3000/ with your browser to see the result.
+
+
