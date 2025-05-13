@@ -15,6 +15,8 @@ or
 bunx drizzle-kit push
 ```
 
+## Signup for admin user and add its to `auth.ts` with `adminUserIds`
+
 
 # Elysia with Bun runtime
 

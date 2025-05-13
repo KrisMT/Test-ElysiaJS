@@ -4,22 +4,44 @@ import { db } from "@/db"
 import * as authSchema from '@/db/auth-schema'
 import { Elysia } from 'elysia'
 
-import { openAPI } from 'better-auth/plugins'
+import { openAPI, admin as adminPlugin } from 'better-auth/plugins'
+
+import { createAccessControl } from 'better-auth/plugins/access'
+import { defaultStatements, adminAc } from 'better-auth/plugins/admin/access'
+
+const statment = {
+  ...defaultStatements,
+  project: ['create', 'share', 'update', 'delete'],
+} as const
+
+const ac = createAccessControl(statment)
+
+const admin = ac.newRole({
+  project: ['create', 'update'],
+  ...adminAc.statements,
+})
 
 export const auth = betterAuth({
   basePath: '/api',
   database: drizzleAdapter(db, {
-        provider: "sqlite", //"pg" or "mysql", "sqlite"
-        schema: {
-          ...authSchema,
-        }
+    provider: "sqlite", //"pg" or "mysql", "sqlite"
+    schema: {
+      ...authSchema,
+    },
   }),
   emailAndPassword: {
     enabled: true,
   },
   plugins: [
     openAPI(),
-  ]
+    adminPlugin({
+      adminUserIds: ['ejbF8Ugz5U8oO2sDmo8citCJJl5210WR'],
+      ac,
+      roles: {
+        admin,
+      },
+    }),
+  ],
 })
 
 let _schema: ReturnType<typeof auth.api.generateOpenAPISchema>
@@ -52,14 +74,14 @@ export const betterAuthService = new Elysia({ name: 'better-auth/service' })
     auth: {
       async resolve({ error, request: { headers }}) {
         const session = await auth.api.getSession({
-          headers
+          headers,
         })
         
         if (!session) return error(401)
 
         return {
           user: session.user,
-          session: session.session
+          session: session.session,
         }
       }
     }

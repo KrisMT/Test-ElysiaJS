@@ -1,9 +1,9 @@
 import { Elysia, t } from "elysia";
-import { getUserId, userService } from '@/user'
+import { getUserId } from '@/user'
 
 const memo = t.Object({
   data: t.String(),
-  author: t.String()
+  author: t.String(),
 })
 
 type Memo = typeof memo.static
@@ -13,7 +13,7 @@ class Note {
     public data: Memo[] = [
       {
         data: 'Moonhalo',
-        author: 'saltyaom'
+        author: 'saltyaom',
       }
     ]
   ) {}
@@ -39,20 +39,20 @@ export const note = new Elysia({
     tags: ['Note']
   } 
 })
-  .use(userService)
+  // .use(getUserId)
   .decorate('note', new Note())
   .model({
-    memo: t.Omit(memo, ['author'])
+    memo: t.Omit(memo, ['author']),
   })
   .use(getUserId)
   .get('/', ({ note }) => note.data)
-  .post('/', ({ note, body: { data }, username }) => note.add({ data, author: username }), {
-    body: 'memo'
+  .post('/', ({ note, body: { data }, user }) => note.add({ data, author: user.name }), {
+    body: 'memo',
   })
   .guard({
     params: t.Object({
-      index: t.Number()
-    })
+      index: t.Number(),
+    }),
   })
   .get('/:index', ({ note, params: { index }, error }) => {
     return note.data[index] ?? error(404)
@@ -61,10 +61,10 @@ export const note = new Elysia({
     if (index in note.data) return note.remove(index)
       return error(422)
   })
-  .patch('/:index', ({ note, params: { index }, body: { data }, error, username }) => {
-    if (index in note.data) return note.update(index, { data, author: username })
+  .patch('/:index', ({ note, params: { index }, body: { data }, error, user }) => {
+    if (index in note.data) return note.update(index, { data, author: user.name })
       return error(422)
   }, {
-    body: 'memo'
+    body: 'memo',
   })
 
