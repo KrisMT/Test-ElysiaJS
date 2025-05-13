@@ -1,5 +1,5 @@
-import { Elysia, t } from 'elysia'
-import { betterAuthService } from '@/utils/auth'
+import { Elysia, t } from 'elysia';
+import { betterAuthService } from '@/utils/auth';
 
 export const getUserId = new Elysia()
   .use(betterAuthService)
@@ -9,7 +9,7 @@ export const getUserId = new Elysia()
   .resolve(({ user }) => ({
     user: user
   }))
-  .as('scoped')
+  .as('scoped');
 
 export const user = new Elysia({ 
   prefix: '/user' ,
@@ -21,5 +21,5 @@ export const user = new Elysia({
   .get('/profile', ({ user }) => ({
       success: true,
       user
-  }))
+  }));
 

@@ -1,50 +1,72 @@
-import { betterAuth } from 'better-auth'
-import { drizzleAdapter } from "better-auth/adapters/drizzle"
-import { db } from "@/db"
-import * as authSchema from '@/db/auth-schema'
-import { Elysia } from 'elysia'
+import { betterAuth } from 'better-auth';
+import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { db } from "@/db";
+import * as authSchema from '@/db/auth-schema';
+import { Elysia } from 'elysia';
 
-import { openAPI } from 'better-auth/plugins'
+import { openAPI, admin as adminPlugin } from 'better-auth/plugins';
+
+import { createAccessControl } from 'better-auth/plugins/access';
+import { defaultStatements, adminAc } from 'better-auth/plugins/admin/access';
+
+const statment = {
+  ...defaultStatements,
+  project: ['create', 'share', 'update', 'delete'],
+} as const;
+
+const ac = createAccessControl(statment);
+
+const admin = ac.newRole({
+  project: ['create', 'update'],
+  ...adminAc.statements,
+});
 
 export const auth = betterAuth({
   basePath: '/api',
   database: drizzleAdapter(db, {
-        provider: "sqlite", //"pg" or "mysql", "sqlite"
-        schema: {
-          ...authSchema,
-        }
+    provider: "sqlite", //"pg" or "mysql", "sqlite"
+    schema: {
+      ...authSchema,
+    },
   }),
   emailAndPassword: {
     enabled: true,
   },
   plugins: [
     openAPI(),
-  ]
-})
+    adminPlugin({
+      adminUserIds: ['ejbF8Ugz5U8oO2sDmo8citCJJl5210WR'],
+      ac,
+      roles: {
+        admin,
+      },
+    }),
+  ],
+});
 
-let _schema: ReturnType<typeof auth.api.generateOpenAPISchema>
-const getSchema = async () => (_schema ??= auth.api.generateOpenAPISchema())
+let _schema: ReturnType<typeof auth.api.generateOpenAPISchema>;
+const getSchema = async () => (_schema ??= auth.api.generateOpenAPISchema());
 
 export const OpenAPI = {
   getPaths: (prefix = '/auth/api') =>
     getSchema().then(({ paths }) => {
-      const reference: typeof paths = Object.create(null)
+      const reference: typeof paths = Object.create(null);
 
       for (const path of Object.keys(paths)) {
-        const key = prefix + path
-        reference[key] = paths[path]
+        const key = prefix + path;
+        reference[key] = paths[path];
 
         for (const method of Object.keys(paths[path])) {
-          const operation = (reference[key] as any)[method]
+          const operation = (reference[key] as any)[method];
 
-          operation.tags = ['Better Auth']
+          operation.tags = ['Better Auth'];
         }
       }
 
-      return reference
+      return reference;
     }) as Promise<any>,
   components: getSchema().then(({ components }) => components) as Promise<any>
-} as const
+} as const;
 
 export const betterAuthService = new Elysia({ name: 'better-auth/service' })
   .mount('/auth', auth.handler)
@@ -52,16 +74,16 @@ export const betterAuthService = new Elysia({ name: 'better-auth/service' })
     auth: {
       async resolve({ error, request: { headers }}) {
         const session = await auth.api.getSession({
-          headers
-        })
+          headers,
+        });
         
-        if (!session) return error(401)
+        if (!session) return error(401);
 
         return {
           user: session.user,
-          session: session.session
-        }
-      }
+          session: session.session,
+        };
+      },
     }
-  })
+  });
 
