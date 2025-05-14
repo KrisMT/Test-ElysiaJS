@@ -24,7 +24,7 @@ const admin = ac.newRole({
 export const auth = betterAuth({
   basePath: '/api',
   database: drizzleAdapter(db, {
-    provider: "sqlite", //"pg" or "mysql", "sqlite"
+    provider: "pg", //"pg" or "mysql", "sqlite"
     schema: {
       ...authSchema,
     },

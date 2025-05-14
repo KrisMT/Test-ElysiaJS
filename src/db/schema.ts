@@ -1,5 +1,5 @@
 // import { integer, pgTable, varchar } from 'drizzle-orm/pg-core'
-import { int, sqliteTable, text } from 'drizzle-orm/sqlite-core';
+// import { int, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 
 // export const classTable = pgTable("classes", {
 //   id: integer().primaryKey().generatedAlwaysAsIdentity(),
@@ -7,9 +7,9 @@ import { int, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 //   class_name: varchar({ length: 255 }).notNull(),
 // })
 
-export const classes = sqliteTable("classes", {
-  id: int().primaryKey({ autoIncrement: true }),
-  class_id: text().notNull(),
-  class_name: text().notNull(),
-});
+// export const classes = sqliteTable("classes", {
+//   id: int().primaryKey({ autoIncrement: true }),
+//   class_id: text().notNull(),
+//   class_name: text().notNull(),
+// });
 
