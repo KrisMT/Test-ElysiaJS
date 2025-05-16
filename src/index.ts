@@ -5,8 +5,15 @@ import { user } from '@/user';
 import { betterAuthService } from '@/utils/auth';
 
 import { OpenAPI, auth } from '@/utils/auth';
+import { cors } from '@elysiajs/cors'
 
 const app = new Elysia()
+  .use(cors({
+    origin: 'http://localhost:3001',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization']
+  }))
   .use(betterAuthService)
   .use(swagger({ 
     provider: 'swagger-ui' ,

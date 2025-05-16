@@ -35,7 +35,7 @@ export const auth = betterAuth({
   plugins: [
     openAPI(),
     adminPlugin({
-      adminUserIds: ['ejbF8Ugz5U8oO2sDmo8citCJJl5210WR'],
+      adminUserIds: [''],
       ac,
       roles: {
         admin,
